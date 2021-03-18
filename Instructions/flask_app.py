@@ -25,7 +25,7 @@ Base.classes.keys()
 
 # Save references to each table
 measurement = Base.classes.measurement
-station = Base.classes.station
+stations = Base.classes.station
 
 # Create our session (link) from Python to the DB
 session = Session(engine)
@@ -45,11 +45,11 @@ def welcome():
     """List all available api routes."""
     return (
         f"Available Routes:<br/>"
-        f"/api/v1.0/precipitation"
-        f"/api/v1.0/stations"
-        f"/api/v1.0/tobs"
-        f"/api/v1.0/<start>"
-        f"/api/v1.0/<start>/<end>"
+        f"/api/v1.0/precipitation<br/>"
+        f"/api/v1.0/stations<br/>"
+        f"/api/v1.0/tobs<br/>"
+        f"/api/v1.0/<start><br/>"
+        f"/api/v1.0/<start>/<end><br/>"
     )
 
 
@@ -64,16 +64,39 @@ def precipitation():
 
     # session.close()
     percip=[]
-    for percip in precip_scores:
+    for precip in precip_scores:
         scores = {}
-        scores["date"]=percip[0]
-        scores["prcp"]=percip[1]
+        scores["date"]=precip[0]
+        scores["prcp"]=precip[1]
         percip.append(scores)
 
     # Convert list of tuples into normal list
     # all_names = list(np.ravel(results))
 
     return jsonify(percip)
+
+
+@app.route("/api/v1.0/stations")
+def station_v():
+#   * Return a JSON list of stations from the dataset.
+
+
+    """Return a list of all passenger names"""
+    # Query all passengers
+    station_results = session.query(stations.station).all()
+
+    # session.close()
+    station_list=[]
+    for st in station_results:
+        scores = {}
+        scores["station name"]=st[0]
+        # scores["prcp"]=precip[1]
+        station_list.append(scores)
+
+    # Convert list of tuples into normal list
+    # all_names = list(np.ravel(results))
+
+    return jsonify(station_list)
 
 
 # @app.route("/api/v1.0/passengers")
